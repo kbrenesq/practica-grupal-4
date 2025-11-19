@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Práctica Grupal 4 - Chart.js</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+    />
+    <style>
+      .reveal h1,
+      .reveal h2,
+      .reveal h3 {
+        text-transform: none;
+      }
+      .chart-container {
+        position: relative;
+        height: 400px;
+        margin: 20px auto;
+        max-width: 700px;
+      }
+      .code-example {
+        font-size: 0.45em;
+        background: #1e1e1e;
+        padding: 15px;
+        border-radius: 8px;
+        max-height: 500px;
+        overflow: visible;
+      }
+      .code-example code {
+        max-height: none;
+        overflow: visible;
+      }
+      .concept-box {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+        font-size: 0.85em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <!-- Slide 1: Título -->
+        <section>
+          <h1>Práctica Grupal 4</h1>
+          <h2>Chart.js</h2>
+          <p style="margin-top: 50px">Visualización de datos con APIs</p>
+          <p style="margin-top: 30px">
+            <small>Presiona → para navegar</small>
+          </p>
+        </section>
+
+        <!-- Slide 2: ¿Qué es Chart.js? -->
+        <section>
+          <h2>¿Qué es Chart.js?</h2>
+          <div class="concept-box">
+            <p>
+              Librería JavaScript para crear gráficos interactivos y responsivos
+            </p>
+          </div>
+          <ul style="font-size: 0.85em; text-align: left; margin-top: 30px">
+            <li>✅ Fácil de usar</li>
+            <li>✅ Canvas HTML5</li>
+            <li>✅ Responsive</li>
+            <li>✅ 8 tipos de gráficos</li>
+          </ul>
+        </section>
+
+        <!-- Slide 3: Instalación -->
+        <section>
+          <h2>Instalación</h2>
+          <pre class="code-example"><code class="language-bash" data-trim>
+# Instalar con npm
+npm install chart.js
+                </code></pre>
+          <pre
+            class="code-example"
+            style="margin-top: 20px"
+          ><code class="language-javascript" data-trim>
+// Importar en JavaScript
+import Chart from 'chart.js/auto';
+                </code></pre>
+        </section>
+
+        <!-- Slide 4: Nuestros Gráficos -->
+        <section>
+          <h2>Gráficos del Proyecto</h2>
+          <div style="font-size: 0.9em">
+            <div class="concept-box">
+              <p><strong>1. Gráfico de Barras</strong></p>
+              <p>Alturas de personajes de Star Wars (SWAPI)</p>
+            </div>
+            <div class="concept-box">
+              <p><strong>2. Gráfico de Dona</strong></p>
+              <p>Distribución de Pokémon por tipo (PokeAPI)</p>
+            </div>
+            <div class="concept-box">
+              <p><strong>3. Gráfico de Líneas</strong></p>
+              <p>Muertes por COVID-19 en USA (COVID API)</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide 5: Gráfico 1 - Bar Chart -->
+        <section>
+          <h2>1. Gráfico de Barras</h2>
+          <div class="chart-container">
+            <canvas id="barChart"></canvas>
+          </div>
+          <p style="font-size: 0.75em">Alturas de personajes de Star Wars</p>
+        </section>
+
+        <!-- Slide 6: Código - Bar Chart -->
+        <section>
+          <h2>Código - Gráfico de Barras</h2>
+          <pre class="code-example"><code class="language-javascript" data-trim>
+// 1. Obtener datos de la API
+async function getCharacter() {
+  const response = await fetch('https://swapi.dev/api/people/');
+  const data = await response.json();
+  return data;
+}
+
+// 2. Procesar datos
+const data = await getCharacter();
+const labels = data.results.map(char => char.name);
+const heights = data.results.map(char => parseInt(char.height, 10));
+
+// 3. Crear gráfico
+const ctx = document.getElementById('acquisitions').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: labels,
+    datasets: [{
+      label: 'Character Heights',
+      data: heights,
+      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      borderColor: 'rgba(75, 192, 192, 1)',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    scales: { y: { beginAtZero: true } }
+  }
+});
+                </code></pre>
+        </section>
+
+        <!-- Slide 7: Gráfico 2 - Doughnut Chart -->
+        <section>
+          <h2>2. Gráfico de Dona</h2>
+          <div class="chart-container">
+            <canvas id="doughnutChart"></canvas>
+          </div>
+          <p style="font-size: 0.75em">Distribución de Pokémon por tipo</p>
+        </section>
+
+        <!-- Slide 8: Código - Doughnut Chart -->
+        <section>
+          <h2>Código - Gráfico de Dona</h2>
+          <pre class="code-example"><code class="language-javascript" data-trim>
+// 1. Obtener datos de PokeAPI
+async function getPokemon() {
+  const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=50');
+  return await response.json();
+}
+
+// 2. Contar tipos de Pokémon
+async function getPokemonTypes(pokemonList) {
+  const types = {};
+  for (const pokemon of pokemonList) {
+    const response = await fetch(pokemon.url);
+    const details = await response.json();
+    const primaryType = details.types[0].type.name;
+    types[primaryType] = (types[primaryType] || 0) + 1;
+  }
+  return types;
+}
+
+// 3. Crear gráfico
+const types = await getPokemonTypes(data.results);
+new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: Object.keys(types),
+    datasets: [{
+      data: Object.values(types),
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)',
+        'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)'
+      ]
+    }]
+  }
+});
+                </code></pre>
+        </section>
+
+        <!-- Slide 9: Gráfico 3 - Line Chart -->
+        <section>
+          <h2>3. Gráfico de Líneas</h2>
+          <div class="chart-container">
+            <canvas id="lineChart"></canvas>
+          </div>
+          <p style="font-size: 0.75em">
+            Total de muertes por COVID-19 en USA (2020-2021)
+          </p>
+        </section>
+
+        <!-- Slide 10: Código - Line Chart -->
+        <section>
+          <h2>Código - Gráfico de Líneas</h2>
+          <pre class="code-example"><code class="language-javascript" data-trim>
+// 1. Definir fechas a analizar
+const DATES = ['2020-03-14', '2020-04-14', '2020-05-14', 
+               '2020-06-14', '2020-07-14', '2020-08-14'];
+
+// 2. Obtener datos de COVID API
+async function fetchData(date) {
+  const url = `https://covid-api.com/api/reports/total?date=${date}&iso=USA`;
+  const response = await fetch(url);
+  const data = await response.json();
+  return data.data.deaths;
+}
+
+// 3. Recopilar todos los datos
+const deathData = [];
+for (const date of DATES) {
+  const deaths = await fetchData(date);
+  deathData.push(deaths);
+}
+
+// 4. Crear gráfico
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: DATES.map(date => date.substring(0, 7)),
+    datasets: [{
+      label: 'Total COVID-19 Deaths in USA',
+      data: deathData,
+      borderColor: 'rgb(255, 99, 132)',
+      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      tension: 0.1
+    }]
+  }
+});
+                </code></pre>
+        </section>
+
+        <!-- Slide 11: Estructura del Proyecto -->
+        <section>
+          <h2>Estructura del Proyecto</h2>
+          <pre class="code-example"><code class="language-html" data-trim>
+&lt;!-- index.html --&gt;
+&lt;div style="width: 800px"&gt;
+  &lt;canvas id="acquisitions"&gt;&lt;/canvas&gt;
+&lt;/div&gt;
+&lt;div style="width: 800px"&gt;
+  &lt;canvas id="rivals"&gt;&lt;/canvas&gt;
+&lt;/div&gt;
+&lt;div style="width: 800px"&gt;
+  &lt;canvas id="covid-deaths"&gt;&lt;/canvas&gt;
+&lt;/div&gt;
+
+&lt;script type="module" src="acquisitions.js"&gt;&lt;/script&gt;
+&lt;script type="module" src="rivals.js"&gt;&lt;/script&gt;
+&lt;script type="module" src="covid19.js"&gt;&lt;/script&gt;
+                </code></pre>
+        </section>
+
+        <!-- Slide 12: Tipos de Gráficos -->
+        <section>
+          <h2>Tipos de Gráficos en Chart.js</h2>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 20px;
+              font-size: 0.8em;
+            "
+          >
+            <div style="text-align: left">
+              <p><strong>📊 Bar</strong> - Comparar valores</p>
+              <p><strong>📈 Line</strong> - Tendencias</p>
+              <p><strong>🥧 Pie</strong> - Proporciones</p>
+              <p><strong>🍩 Doughnut</strong> - Distribución</p>
+            </div>
+            <div style="text-align: left">
+              <p><strong>🎯 Radar</strong> - Múltiples variables</p>
+              <p><strong>📉 Polar Area</strong> - Datos circulares</p>
+              <p><strong>💧 Bubble</strong> - 3 dimensiones</p>
+              <p><strong>📊 Scatter</strong> - Correlaciones</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide 13: Opciones Importantes -->
+        <section>
+          <h2>Opciones Importantes</h2>
+          <pre class="code-example"><code class="language-javascript" data-trim>
+options: {
+  responsive: true,              // Se adapta al contenedor
+  
+  plugins: {
+    title: {
+      display: true,
+      text: 'Mi Gráfico',
+      font: { size: 20 }
+    }
+  },
+  
+  scales: {
+    y: {
+      beginAtZero: true,          // Eje Y empieza en 0
+      title: {
+        display: true,
+        text: 'Valores'
+      }
+    },
+    x: {
+      title: {
+        display: true,
+        text: 'Categorías'
+      }
+    }
+  }
+}
+                </code></pre>
+        </section>
+
+        <!-- Slide 14: Trabajando con APIs -->
+        <section>
+          <h2>Trabajando con APIs</h2>
+          <div class="concept-box">
+            <p><strong>Patrón común:</strong></p>
+          </div>
+          <pre class="code-example"><code class="language-javascript" data-trim>
+// 1. Crear función async para obtener datos
+async function getData() {
+  const response = await fetch('URL_API');
+  const data = await response.json();
+  return data;
+}
+
+// 2. Procesar los datos
+async function init() {
+  const data = await getData();
+  
+  // Extraer labels y valores
+  const labels = data.map(item => item.name);
+  const values = data.map(item => item.value);
+  
+  // 3. Crear el gráfico
+  new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ data: values }] }
+  });
+}
+
+init();
+                </code></pre>
+        </section>
+
+        <!-- Slide 15: Personalización de Colores -->
+        <section>
+          <h2>Personalización de Colores</h2>
+          <pre class="code-example"><code class="language-javascript" data-trim>
+// Colores con transparencia
+backgroundColor: 'rgba(255, 99, 132, 0.6)'
+borderColor: 'rgba(255, 99, 132, 1)'
+
+// Array de colores (uno por dato)
+backgroundColor: [
+  'rgba(255, 99, 132, 0.6)',
+  'rgba(54, 162, 235, 0.6)',
+  'rgba(75, 192, 192, 0.6)',
+  'rgba(153, 102, 255, 0.6)',
+  'rgba(255, 206, 86, 0.6)'
+]
+
+// Formato: rgba(R, G, B, Alpha)
+// R, G, B: 0-255
+// Alpha: 0-1 (transparencia)
+                </code></pre>
+        </section>
+
+        <!-- Slide 16: Tips -->
+        <section>
+          <h2>Tips del Proyecto</h2>
+          <ul style="font-size: 0.85em; text-align: left">
+            <li><strong>Usar async/await</strong> para APIs</li>
+            <li><strong>map()</strong> para transformar datos</li>
+            <li>
+              <strong>parseInt()</strong> para convertir strings a números
+            </li>
+            <li>
+              <strong>Object.keys()</strong> y
+              <strong>Object.values()</strong> para objetos
+            </li>
+            <li><strong>getContext('2d')</strong> para inicializar canvas</li>
+            <li><strong>Importar módulos</strong> con ES6 modules</li>
+          </ul>
+        </section>
+
+        <!-- Slide 17: Recursos -->
+        <section>
+          <h2>Recursos</h2>
+          <ul style="font-size: 0.85em; text-align: left">
+            <li>
+              📚 <strong>Docs:</strong>
+              <a href="https://www.chartjs.org/docs/" target="_blank"
+                >chartjs.org/docs</a
+              >
+            </li>
+            <li>
+              💻 <strong>GitHub:</strong>
+              <a href="https://github.com/chartjs/Chart.js" target="_blank"
+                >github.com/chartjs/Chart.js</a
+              >
+            </li>
+            <li>
+              🌐 <strong>SWAPI:</strong>
+              <a href="https://swapi.dev" target="_blank">swapi.dev</a>
+            </li>
+            <li>
+              🎮 <strong>PokeAPI:</strong>
+              <a href="https://pokeapi.co" target="_blank">pokeapi.co</a>
+            </li>
+            <li>
+              😷 <strong>COVID API:</strong>
+              <a href="https://covid-api.com" target="_blank">covid-api.com</a>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Slide 18: Gracias -->
+        <section>
+          <h1>¡Gracias!</h1>
+          <p style="margin-top: 50px; font-size: 0.9em">
+            Práctica Grupal 4 - Chart.js
+          </p>
+          <p style="margin-top: 30px; font-size: 0.7em">
+            <small>Presentación con reveal.js</small>
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        transition: "slide",
+        transitionSpeed: "default",
+      });
+
+      hljs.highlightAll();
+
+      Reveal.on("ready", function () {
+        crearGraficos();
+      });
+
+      function crearGraficos() {
+        // Gráfico de Barras - Star Wars
+        const barCtx = document.getElementById("barChart");
+        if (barCtx) {
+          new Chart(barCtx, {
+            type: "bar",
+            data: {
+              labels: [
+                "Luke Skywalker",
+                "C-3PO",
+                "R2-D2",
+                "Darth Vader",
+                "Leia Organa",
+                "Owen Lars",
+                "Beru Lars",
+                "R5-D4",
+                "Biggs",
+                "Obi-Wan",
+              ],
+              datasets: [
+                {
+                  label: "Altura (cm)",
+                  data: [172, 167, 96, 202, 150, 178, 165, 97, 183, 182],
+                  backgroundColor: "rgba(75, 192, 192, 0.2)",
+                  borderColor: "rgba(75, 192, 192, 1)",
+                  borderWidth: 1,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Alturas de Personajes de Star Wars",
+                  color: "#fff",
+                  font: { size: 16 },
+                },
+                legend: { labels: { color: "#fff" } },
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: { color: "#fff" },
+                  grid: { color: "rgba(255, 255, 255, 0.1)" },
+                },
+                x: {
+                  ticks: { color: "#fff", font: { size: 10 } },
+                  grid: { color: "rgba(255, 255, 255, 0.1)" },
+                },
+              },
+            },
+          });
+        }
+
+        // Gráfico de Dona - Pokémon
+        const doughnutCtx = document.getElementById("doughnutChart");
+        if (doughnutCtx) {
+          new Chart(doughnutCtx, {
+            type: "doughnut",
+            data: {
+              labels: [
+                "Normal",
+                "Fuego",
+                "Agua",
+                "Planta",
+                "Veneno",
+                "Volador",
+                "Bicho",
+                "Eléctrico",
+              ],
+              datasets: [
+                {
+                  label: "Cantidad de Pokémon",
+                  data: [8, 4, 6, 5, 7, 3, 4, 6],
+                  backgroundColor: [
+                    "rgba(99, 255, 132, 0.6)",
+                    "rgba(255, 99, 132, 0.6)",
+                    "rgba(54, 162, 235, 0.6)",
+                    "rgba(75, 192, 192, 0.6)",
+                    "rgba(199, 199, 199, 0.6)",
+                    "rgba(153, 102, 255, 0.6)",
+                    "rgba(255, 206, 86, 0.6)",
+                    "rgba(255, 159, 64, 0.6)",
+                  ],
+                  borderColor: "rgba(255, 255, 255, 1)",
+                  borderWidth: 2,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Distribución de Pokémon por Tipo",
+                  color: "#fff",
+                  font: { size: 16 },
+                },
+                legend: {
+                  labels: { color: "#fff" },
+                  position: "right",
+                },
+              },
+            },
+          });
+        }
+
+        // Gráfico de Líneas - COVID-19
+        const lineCtx = document.getElementById("lineChart");
+        if (lineCtx) {
+          new Chart(lineCtx, {
+            type: "line",
+            data: {
+              labels: [
+                "2020-03",
+                "2020-04",
+                "2020-05",
+                "2020-06",
+                "2020-07",
+                "2020-08",
+                "2020-09",
+                "2020-10",
+                "2020-11",
+                "2020-12",
+                "2021-01",
+                "2021-02",
+                "2021-03",
+              ],
+              datasets: [
+                {
+                  label: "Total de Muertes",
+                  data: [
+                    2000, 50000, 100000, 120000, 145000, 180000, 200000, 225000,
+                    270000, 330000, 430000, 500000, 535000,
+                  ],
+                  borderColor: "rgb(255, 99, 132)",
+                  backgroundColor: "rgba(255, 99, 132, 0.5)",
+                  pointStyle: "circle",
+                  pointRadius: 4,
+                  pointHoverRadius: 8,
+                  tension: 0.1,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                title: {
+                  display: true,
+                  text: "COVID-19 en USA (Mar 2020 - Mar 2021)",
+                  color: "#fff",
+                  font: { size: 16 },
+                },
+                legend: { labels: { color: "#fff" } },
+              },
+              scales: {
+                y: {
+                  beginAtZero: false,
+                  title: {
+                    display: true,
+                    text: "Total de Muertes",
+                    color: "#fff",
+                  },
+                  ticks: { color: "#fff" },
+                  grid: { color: "rgba(255, 255, 255, 0.1)" },
+                },
+                x: {
+                  title: {
+                    display: true,
+                    text: "Mes",
+                    color: "#fff",
+                  },
+                  ticks: { color: "#fff" },
+                  grid: { color: "rgba(255, 255, 255, 0.1)" },
+                },
+              },
+            },
+          });
+        }
+      }
+    </script>
+  </body>
+</html>
